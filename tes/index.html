@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clock In / Clock Out — Mutawwifmu Karya Bangsa</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --navy: #1a3c6e;
+        --blue: #2f5fa8;
+        --sky: #4a7bc8;
+        --light: #e8eef7;
+        --mint: #00897b;
+        --amber: #f59e0b;
+        --rose: #e53935;
+        --ink: #1a1a2e;
+        --mist: #f4f7fc;
+        --white: #ffffff;
+        --shadow: 0 8px 40px rgba(26, 60, 110, 0.13);
+        --radius: 18px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--mist);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 0 60px;
+        background-image:
+          radial-gradient(
+            ellipse 80% 50% at 50% -10%,
+            rgba(74, 123, 200, 0.15) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 40% 30% at 90% 80%,
+            rgba(0, 137, 123, 0.08) 0%,
+            transparent 60%
+          );
+      }
+
+      /* ── HEADER ── */
+      header {
+        width: 100%;
+        background: var(--navy);
+        padding: 20px 40px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        box-shadow: 0 4px 24px rgba(26, 60, 110, 0.25);
+        position: relative;
+        overflow: hidden;
+      }
+      header::after {
+        content: "";
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .logo-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--sky), var(--mint));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "DM Serif Display", serif;
+        font-size: 22px;
+        color: #fff;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(0, 137, 123, 0.4);
+      }
+      .header-text h1 {
+        font-family: "DM Serif Display", serif;
+        font-size: 18px;
+        color: #fff;
+        letter-spacing: 0.3px;
+      }
+      .header-text p {
+        font-size: 11.5px;
+        color: rgba(255, 255, 255, 0.55);
+        font-weight: 300;
+        margin-top: 1px;
+      }
+
+      /* ── LIVE CLOCK ── */
+      .clock-hero {
+        margin-top: 40px;
+        text-align: center;
+      }
+      .clock-time {
+        font-family: "DM Serif Display", serif;
+        font-size: clamp(52px, 10vw, 80px);
+        color: var(--navy);
+        letter-spacing: -2px;
+        line-height: 1;
+        transition: color 0.3s;
+      }
+      .clock-date {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--sky);
+        margin-top: 6px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+      .clock-status-badge {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 5px 16px;
+        border-radius: 99px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: var(--light);
+        color: var(--navy);
+        transition: all 0.3s;
+      }
+      .clock-status-badge.late {
+        background: #fff3e0;
+        color: var(--rose);
+      }
+      .clock-status-badge.ontime {
+        background: #e8f5e9;
+        color: var(--mint);
+      }
+
+      /* ── MAIN CARD ── */
+      .main-card {
+        width: min(580px, 94vw);
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 36px 40px;
+        margin-top: 32px;
+        border: 1px solid rgba(74, 123, 200, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      .main-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--navy),
+          var(--sky),
+          var(--mint)
+        );
+      }
+
+      .section-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--sky);
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-label::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--light);
+      }
+
+      /* ── TOGGLE CLOCK IN / OUT ── */
+      .mode-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        background: var(--light);
+        border-radius: 12px;
+        padding: 4px;
+        margin-bottom: 28px;
+      }
+      .mode-btn {
+        padding: 10px 16px;
+        border: none;
+        background: transparent;
+        border-radius: 9px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #8a9ec4;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+      .mode-btn.active {
+        background: var(--white);
+        color: var(--navy);
+        box-shadow: 0 2px 10px rgba(26, 60, 110, 0.12);
+      }
+      .mode-btn.active.clockout {
+        color: var(--mint);
+      }
+
+      /* ── FORM FIELDS ── */
+      .field-group {
+        margin-bottom: 20px;
+      }
+      .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--navy);
+        margin-bottom: 7px;
+        letter-spacing: 0.3px;
+      }
+      .field-label span.required {
+        color: var(--rose);
+        margin-left: 3px;
+      }
+
+      select,
+      input[type="time"],
+      input[type="text"],
+      input[type="file"],
+      textarea {
+        width: 100%;
+        padding: 11px 15px;
+        border: 1.5px solid #dce5f5;
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        color: var(--ink);
+        background: var(--mist);
+        transition: all 0.2s;
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+      select:focus,
+      input[type="time"]:focus,
+      input[type="text"]:focus,
+      textarea:focus {
+        border-color: var(--sky);
+        background: var(--white);
+        box-shadow: 0 0 0 3px rgba(74, 123, 200, 0.1);
+      }
+      select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A7BC8' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 38px;
+        cursor: pointer;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 90px;
+        line-height: 1.6;
+      }
+
+      .time-auto-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .time-auto-row input {
+        flex: 1;
+      }
+      .btn-now {
+        padding: 11px 14px;
+        border: none;
+        background: var(--light);
+        color: var(--navy);
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+      .btn-now:hover {
+        background: var(--sky);
+        color: #fff;
+      }
+
+      /* Status WFO/WFA pills */
+      .status-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .status-pill {
+        padding: 8px 18px;
+        border-radius: 99px;
+        border: 1.5px solid #dce5f5;
+        background: var(--mist);
+        font-size: 13px;
+        font-weight: 500;
+        color: #8a9ec4;
+        cursor: pointer;
+        transition: all 0.2s;
+        user-select: none;
+      }
+      .status-pill:hover {
+        border-color: var(--sky);
+        color: var(--sky);
+      }
+      .status-pill.selected {
+        border-color: var(--navy);
+        background: var(--navy);
+        color: #fff;
+      }
+      .status-pill.selected.remote {
+        background: var(--mint);
+        border-color: var(--mint);
+      }
+      .status-pill.selected.wfa {
+        background: var(--sky);
+        border-color: var(--sky);
+      }
+
+      /* File upload */
+      .file-upload-box {
+        border: 2px dashed #dce5f5;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--mist);
+        position: relative;
+      }
+      .file-upload-box:hover,
+      .file-upload-box.dragover {
+        border-color: var(--sky);
+        background: rgba(74, 123, 200, 0.05);
+      }
+      .file-upload-box input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+      .file-upload-icon {
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+      .file-upload-text {
+        font-size: 13px;
+        color: #8a9ec4;
+        font-weight: 400;
+      }
+      .file-upload-text strong {
+        color: var(--sky);
+        font-weight: 600;
+      }
+      .file-name-display {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--mint);
+        font-weight: 500;
+        display: none;
+      }
+
+      /* ── SUBMIT BTN ── */
+      .btn-submit {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+        color: #fff;
+        border-radius: 12px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s;
+        letter-spacing: 0.3px;
+        box-shadow: 0 6px 20px rgba(26, 60, 110, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(26, 60, 110, 0.32);
+      }
+      .btn-submit:active {
+        transform: translateY(0);
+      }
+      .btn-submit.clockout-submit {
+        background: linear-gradient(135deg, var(--mint) 0%, #00695c 100%);
+        box-shadow: 0 6px 20px rgba(0, 137, 123, 0.28);
+      }
+      .btn-submit.clockout-submit:hover {
+        box-shadow: 0 10px 28px rgba(0, 137, 123, 0.36);
+      }
+
+      /* ── SUCCESS / RECEIPT ── */
+      .receipt-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(26, 60, 110, 0.55);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        padding: 20px;
+      }
+      .receipt-overlay.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .receipt-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 36px;
+        width: min(480px, 95vw);
+        box-shadow: 0 24px 80px rgba(26, 60, 110, 0.25);
+        transform: scale(0.9) translateY(20px);
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .receipt-overlay.show .receipt-card {
+        transform: scale(1) translateY(0);
+      }
+      .receipt-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--navy), var(--mint));
+      }
+
+      .receipt-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 16px;
+      }
+      .receipt-icon.in {
+        background: #e3f2fd;
+      }
+      .receipt-icon.out {
+        background: #e8f5e9;
+      }
+
+      .receipt-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 22px;
+        color: var(--navy);
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .receipt-subtitle {
+        font-size: 13px;
+        color: #8a9ec4;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .receipt-body {
+        background: var(--mist);
+        border-radius: 12px;
+        padding: 18px;
+        display: grid;
+        gap: 10px;
+      }
+      .receipt-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 13px;
+      }
+      .receipt-row .rkey {
+        color: #8a9ec4;
+        font-weight: 400;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .receipt-row .rval {
+        color: var(--ink);
+        font-weight: 600;
+        text-align: right;
+        word-break: break-word;
+      }
+      .receipt-row .rval.time {
+        font-family: "DM Serif Display", serif;
+        font-size: 16px;
+        color: var(--navy);
+      }
+      .receipt-row .rval.late {
+        color: var(--rose);
+      }
+      .receipt-row .rval.ontime {
+        color: var(--mint);
+      }
+
+      .receipt-divider {
+        height: 1px;
+        background: rgba(74, 123, 200, 0.15);
+        margin: 4px 0;
+      }
+
+      .receipt-desc {
+        margin-top: 14px;
+        padding: 14px;
+        background: var(--light);
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--ink);
+        line-height: 1.6;
+      }
+      .receipt-desc-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--sky);
+        margin-bottom: 6px;
+      }
+
+      .receipt-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .btn-print,
+      .btn-close {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+      .btn-print {
+        background: var(--navy);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(26, 60, 110, 0.2);
+      }
+      .btn-print:hover {
+        background: var(--blue);
+      }
+      .btn-close {
+        background: var(--light);
+        color: var(--navy);
+      }
+      .btn-close:hover {
+        background: #d0ddf0;
+      }
+
+      /* ── LOG TABLE ── */
+      .log-card {
+        width: min(580px, 94vw);
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 30px 40px;
+        margin-top: 20px;
+        border: 1px solid rgba(74, 123, 200, 0.1);
+      }
+      .log-empty {
+        text-align: center;
+        padding: 24px 0;
+        color: #b0bdd8;
+        font-size: 13px;
+      }
+      .log-entry {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--light);
+        animation: fadeIn 0.3s ease;
+      }
+      .log-entry:last-child {
+        border-bottom: none;
+      }
+      .log-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .log-dot.in {
+        background: #e3f2fd;
+      }
+      .log-dot.out {
+        background: #e8f5e9;
+      }
+      .log-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .log-name {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--navy);
+      }
+      .log-meta {
+        font-size: 11.5px;
+        color: #8a9ec4;
+        margin-top: 2px;
+      }
+      .log-time {
+        font-family: "DM Serif Display", serif;
+        font-size: 18px;
+        color: var(--navy);
+        flex-shrink: 0;
+      }
+      .log-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 99px;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+      }
+      .log-badge.in {
+        background: #e3f2fd;
+        color: #1565c0;
+      }
+      .log-badge.out {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .log-badge.late {
+        background: #ffebee;
+        color: var(--rose);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── EXPORT HINT ── */
+      .export-hint {
+        width: min(580px, 94vw);
+        margin-top: 14px;
+        padding: 14px 20px;
+        border-radius: 12px;
+        background: rgba(26, 60, 110, 0.05);
+        border: 1px dashed rgba(74, 123, 200, 0.3);
+        font-size: 12px;
+        color: #8a9ec4;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .export-hint button {
+        margin-left: auto;
+        padding: 7px 14px;
+        border: 1.5px solid var(--sky);
+        background: transparent;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--sky);
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .export-hint button:hover {
+        background: var(--sky);
+        color: #fff;
+      }
+
+      @media (max-width: 520px) {
+        .main-card,
+        .log-card {
+          padding: 24px 20px;
+        }
+        header {
+          padding: 16px 20px;
+        }
+        .receipt-card {
+          padding: 24px 20px;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+        header,
+        .main-card,
+        .log-card,
+        .export-hint,
+        .clock-hero {
+          display: none;
+        }
+        .receipt-overlay {
+          position: static;
+          opacity: 1;
+          pointer-events: all;
+          background: none;
+          backdrop-filter: none;
+          padding: 0;
+        }
+        .receipt-card {
+          box-shadow: none;
+          border: 1px solid #ccc;
+        }
+        .receipt-actions {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo-mark">M</div>
+      <div class="header-text">
+        <h1>Mutawwifmu Karya Bangsa</h1>
+        <p>Sistem Kehadiran Digital — Clock In / Clock Out</p>
+      </div>
+    </header>
+
+    <!-- LIVE CLOCK -->
+    <div class="clock-hero">
+      <div class="clock-time" id="clockDisplay">00:00:00</div>
+      <div class="clock-date" id="dateDisplay">—</div>
+      <div class="clock-status-badge" id="statusBadge">Menunggu...</div>
+    </div>
+
+    <!-- MAIN FORM -->
+    <div class="main-card">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btnModeIn" onclick="setMode('in')">
+          🟢 Clock In
+        </button>
+        <button
+          class="mode-btn clockout"
+          id="btnModeOut"
+          onclick="setMode('out')"
+        >
+          🔴 Clock Out
+        </button>
+      </div>
+
+      <div class="section-label" id="formSectionLabel">Informasi Kehadiran</div>
+
+      <!-- Nama -->
+      <div class="field-group">
+        <label class="field-label"
+          >Nama Karyawan <span class="required">*</span></label
+        >
+        <select id="fieldNama">
+          <option value="">— Pilih nama —</option>
+          <option>Rinaldi Nur Ibrahim</option>
+          <option>Muhammad Husni Ali Hasan</option>
+          <option>Dhiya Nawwariyah</option>
+          <option>Syaukat</option>
+          <option>Indriana</option>
+          <option>Adinda Zaizafun</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div class="field-group">
+        <label class="field-label"
+          >Status Hari Ini <span class="required">*</span></label
+        >
+        <div class="status-pills">
+          <div
+            class="status-pill"
+            data-val="WFO"
+            onclick="selectStatus(this, 'WFO')"
+          >
+            🏢 WFO
+          </div>
+          <div
+            class="status-pill wfa"
+            data-val="WFA"
+            onclick="selectStatus(this, 'WFA')"
+          >
+            🌐 WFA
+          </div>
+          <div
+            class="status-pill remote"
+            data-val="Remote"
+            onclick="selectStatus(this, 'Remote')"
+          >
+            🏠 Remote
+          </div>
+        </div>
+        <input type="hidden" id="fieldStatus" />
+      </div>
+
+      <!-- Jam -->
+      <div class="field-group">
+        <label class="field-label" id="jamLabel"
+          >Jam Clock In <span class="required">*</span></label
+        >
+        <div class="time-auto-row">
+          <input type="time" id="fieldJam" />
+          <button class="btn-now" onclick="setNow()">⏱ Sekarang</button>
+        </div>
+      </div>
+
+      <!-- Deskripsi kegiatan – hanya untuk Clock Out -->
+      <div class="field-group" id="deskripsiGroup" style="display: none">
+        <label class="field-label"
+          >Rangkuman Kegiatan Hari Ini <span class="required">*</span></label
+        >
+        <textarea
+          id="fieldDeskripsi"
+          placeholder="Contoh: Selesaikan desain banner Ramadan, rapat tim produk, review konten sosmed minggu depan..."
+        ></textarea>
+      </div>
+
+      <!-- Upload bukti – hanya untuk Clock Out -->
+      <div class="field-group" id="uploadGroup" style="display: none">
+        <label class="field-label">Bukti / Lampiran (opsional)</label>
+        <div class="file-upload-box" id="dropZone">
+          <input
+            type="file"
+            id="fieldFile"
+            accept="image/*,.pdf,.docx"
+            onchange="handleFile(this)"
+          />
+          <div class="file-upload-icon">📎</div>
+          <div class="file-upload-text">
+            <strong>Klik untuk upload</strong> atau drag & drop<br />JPG, PNG,
+            PDF — maks. 5 MB
+          </div>
+          <div class="file-name-display" id="fileName"></div>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btnSubmit" onclick="submitForm()">
+        <span id="btnIcon">🟢</span>
+        <span id="btnText">Konfirmasi Clock In</span>
+      </button>
+    </div>
+
+    <!-- LOG HARI INI -->
+    <div class="log-card">
+      <div class="section-label">Log Kehadiran Hari Ini</div>
+      <div id="logContainer">
+        <div class="log-empty">Belum ada aktivitas hari ini.</div>
+      </div>
+    </div>
+
+    <!-- EXPORT HINT -->
+    <div class="export-hint">
+      💡 Data tersimpan di browser. Export ke CSV untuk dimasukkan ke Google
+      Sheets HRMS.
+      <button onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+
+    <!-- RECEIPT OVERLAY -->
+    <div
+      class="receipt-overlay"
+      id="receiptOverlay"
+      onclick="closeReceipt(event)"
+    >
+      <div class="receipt-card" id="receiptCard">
+        <div class="receipt-icon" id="receiptIcon">✅</div>
+        <div class="receipt-title" id="receiptTitle">Clock In Berhasil</div>
+        <div class="receipt-subtitle" id="receiptSubtitle">
+          Semangat bekerja hari ini!
+        </div>
+        <div class="receipt-body" id="receiptBody"></div>
+        <div id="receiptDescBlock" style="display: none">
+          <div class="receipt-desc">
+            <div class="receipt-desc-label">Kegiatan Hari Ini</div>
+            <div id="receiptDescText"></div>
+          </div>
+        </div>
+        <div class="receipt-actions">
+          <button class="btn-print" onclick="window.print()">
+            🖨 Cetak Bukti
+          </button>
+          <button class="btn-close" onclick="closeReceipt()">Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ── State ──────────────────────────────────────────────────────────────────
+      let currentMode = "in";
+      let selectedStatus = "";
+      let logs = JSON.parse(localStorage.getItem("mkb_logs") || "[]");
+      // Filter today only
+      const todayStr = new Date().toDateString();
+      logs = logs.filter((l) => new Date(l.ts).toDateString() === todayStr);
+
+      // ── Live clock ────────────────────────────────────────────────────────────
+      const WORK_START = 9 * 60; // 09:00 in minutes
+      const days = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jumat",
+        "Sabtu",
+      ];
+      const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+      ];
+
+      function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, "0");
+        const m = String(now.getMinutes()).padStart(2, "0");
+        const s = String(now.getSeconds()).padStart(2, "0");
+        document.getElementById("clockDisplay").textContent = `${h}:${m}:${s}`;
+        document.getElementById("dateDisplay").textContent =
+          `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+        const totalMin = now.getHours() * 60 + now.getMinutes();
+        const badge = document.getElementById("statusBadge");
+        if (now.getDay() === 0 || now.getDay() === 6) {
+          badge.textContent = "🏖 Hari Libur";
+          badge.className = "clock-status-badge";
+        } else if (totalMin < WORK_START) {
+          const diff = WORK_START - totalMin;
+          badge.textContent = `⏳ Jam kerja dalam ${diff} menit`;
+          badge.className = "clock-status-badge";
+        } else if (totalMin === WORK_START) {
+          badge.textContent = "✅ Tepat Waktu!";
+          badge.className = "clock-status-badge ontime";
+        } else {
+          const late = totalMin - WORK_START;
+          badge.textContent = `⚠ Terlambat ${late} menit`;
+          badge.className = "clock-status-badge late";
+        }
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // ── Mode toggle ───────────────────────────────────────────────────────────
+      function setMode(mode) {
+        currentMode = mode;
+        const isOut = mode === "out";
+        document.getElementById("btnModeIn").classList.toggle("active", !isOut);
+        document.getElementById("btnModeOut").classList.toggle("active", isOut);
+        document.getElementById("jamLabel").textContent = isOut
+          ? "Jam Clock Out *"
+          : "Jam Clock In *";
+        document.getElementById("jamLabel").innerHTML = isOut
+          ? 'Jam Clock Out <span class="required">*</span>'
+          : 'Jam Clock In <span class="required">*</span>';
+        document.getElementById("deskripsiGroup").style.display = isOut
+          ? "block"
+          : "none";
+        document.getElementById("uploadGroup").style.display = isOut
+          ? "block"
+          : "none";
+        document.getElementById("formSectionLabel").textContent = isOut
+          ? "Informasi Clock Out & Laporan Kerja"
+          : "Informasi Kehadiran";
+        document.getElementById("btnIcon").textContent = isOut ? "🔴" : "🟢";
+        document.getElementById("btnText").textContent = isOut
+          ? "Konfirmasi Clock Out & Kirim Laporan"
+          : "Konfirmasi Clock In";
+        document.getElementById("btnSubmit").className = isOut
+          ? "btn-submit clockout-submit"
+          : "btn-submit";
+        setNow();
+      }
+
+      // ── Status pills ──────────────────────────────────────────────────────────
+      function selectStatus(el, val) {
+        document
+          .querySelectorAll(".status-pill")
+          .forEach((p) => p.classList.remove("selected"));
+        el.classList.add("selected");
+        selectedStatus = val;
+        document.getElementById("fieldStatus").value = val;
+      }
+
+      // ── Set now ───────────────────────────────────────────────────────────────
+      function setNow() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, "0");
+        const m = String(now.getMinutes()).padStart(2, "0");
+        document.getElementById("fieldJam").value = `${h}:${m}`;
+      }
+      setNow();
+
+      // ── File upload ───────────────────────────────────────────────────────────
+      function handleFile(input) {
+        const f = input.files[0];
+        const disp = document.getElementById("fileName");
+        if (f) {
+          disp.textContent = "📎 " + f.name;
+          disp.style.display = "block";
+        }
+      }
+
+      // ── Drag & drop ───────────────────────────────────────────────────────────
+      const dz = document.getElementById("dropZone");
+      dz.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dz.classList.add("dragover");
+      });
+      dz.addEventListener("dragleave", () => dz.classList.remove("dragover"));
+      dz.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dz.classList.remove("dragover");
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          document.getElementById("fieldFile").files = e.dataTransfer.files;
+          handleFile(document.getElementById("fieldFile"));
+        }
+      });
+
+      // ── Submit ────────────────────────────────────────────────────────────────
+      function submitForm() {
+        const nama = document.getElementById("fieldNama").value;
+        const jam = document.getElementById("fieldJam").value;
+        const status = selectedStatus;
+        const deskripsi = document.getElementById("fieldDeskripsi").value;
+        const isOut = currentMode === "out";
+
+        if (!nama) return alert("Pilih nama karyawan terlebih dahulu.");
+        if (!jam) return alert("Masukkan jam terlebih dahulu.");
+        if (!status)
+          return alert("Pilih status kehadiran (WFO / WFA / Remote).");
+        if (isOut && !deskripsi.trim())
+          return alert("Mohon isi rangkuman kegiatan hari ini.");
+
+        // Lateness check
+        const [hh, mm] = jam.split(":").map(Number);
+        const totalMin = hh * 60 + mm;
+        const lateMin = isOut ? 0 : Math.max(0, totalMin - WORK_START);
+
+        const entry = {
+          ts: new Date().toISOString(),
+          type: currentMode,
+          nama,
+          jam,
+          status,
+          deskripsi: isOut ? deskripsi : "",
+          file: document.getElementById("fieldFile").files[0]?.name || "",
+          lateMin,
+          potongan: !isOut && lateMin > 0 ? Math.ceil(lateMin / 60) * 15000 : 0,
+        };
+
+        logs.push(entry);
+        saveLogs();
+        renderLog();
+        showReceipt(entry);
+        resetForm();
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbwLx1vNuTow27fCgWdLFlgHkdMudONeyYRUW8RsIRVAaWa021zdN7dPG6pdBxv8zu0Zbg/exec",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(entry),
+          },
+        )
+          .then((res) => res.text())
+          .then((data) => {
+            console.log("Response Apps Script:", data);
+          })
+          .catch((err) => console.error("Error:", err));
+      }
+
+      function resetForm() {
+        document.getElementById("fieldNama").value = "";
+        document
+          .querySelectorAll(".status-pill")
+          .forEach((p) => p.classList.remove("selected"));
+        selectedStatus = "";
+        document.getElementById("fieldStatus").value = "";
+        document.getElementById("fieldDeskripsi").value = "";
+        document.getElementById("fieldFile").value = "";
+        document.getElementById("fileName").style.display = "none";
+        setNow();
+      }
+
+      // ── Receipt ───────────────────────────────────────────────────────────────
+      function showReceipt(entry) {
+        const isOut = entry.type === "out";
+        const icon = document.getElementById("receiptIcon");
+        icon.textContent = isOut ? "✅" : "🟢";
+        icon.className = "receipt-icon " + (isOut ? "out" : "in");
+
+        document.getElementById("receiptTitle").textContent = isOut
+          ? "Clock Out Berhasil!"
+          : "Clock In Berhasil!";
+        document.getElementById("receiptSubtitle").textContent = isOut
+          ? "Terima kasih atas kerja keras hari ini 🙌"
+          : "Semangat bekerja hari ini! 💪";
+
+        const now = new Date();
+        const dateStr = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+        let rows = `
+      <div class="receipt-row">
+        <span class="rkey">Nama</span>
+        <span class="rval">${entry.nama}</span>
+      </div>
+      <div class="receipt-row">
+        <span class="rkey">Status</span>
+        <span class="rval">${entry.status}</span>
+      </div>
+      <div class="receipt-row">
+        <span class="rkey">Tanggal</span>
+        <span class="rval">${dateStr}</span>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-row">
+        <span class="rkey">${isOut ? "Jam Clock Out" : "Jam Clock In"}</span>
+        <span class="rval time">${entry.jam}</span>
+      </div>`;
+
+        if (!isOut) {
+          if (entry.lateMin > 0) {
+            const jamTelat = Math.ceil(entry.lateMin / 60);
+            rows += `
+          <div class="receipt-row">
+            <span class="rkey">Keterlambatan</span>
+            <span class="rval late">⚠ ${entry.lateMin} menit</span>
+          </div>
+          <div class="receipt-row">
+            <span class="rkey">Potongan</span>
+            <span class="rval late">Rp ${entry.potongan.toLocaleString("id-ID")},-</span>
+          </div>`;
+          } else {
+            rows += `
+          <div class="receipt-row">
+            <span class="rkey">Status</span>
+            <span class="rval ontime">✅ Tepat Waktu</span>
+          </div>`;
+          }
+        }
+
+        if (entry.file) {
+          rows += `
+        <div class="receipt-row">
+          <span class="rkey">Lampiran</span>
+          <span class="rval">📎 ${entry.file}</span>
+        </div>`;
+        }
+
+        document.getElementById("receiptBody").innerHTML = rows;
+
+        const descBlock = document.getElementById("receiptDescBlock");
+        if (isOut && entry.deskripsi) {
+          descBlock.style.display = "block";
+          document.getElementById("receiptDescText").textContent =
+            entry.deskripsi;
+        } else {
+          descBlock.style.display = "none";
+        }
+
+        document.getElementById("receiptOverlay").classList.add("show");
+      }
+
+      function closeReceipt(e) {
+        if (!e || e.target === document.getElementById("receiptOverlay")) {
+          document.getElementById("receiptOverlay").classList.remove("show");
+        }
+      }
+
+      // ── Render log ────────────────────────────────────────────────────────────
+      function renderLog() {
+        const container = document.getElementById("logContainer");
+        if (logs.length === 0) {
+          container.innerHTML =
+            '<div class="log-empty">Belum ada aktivitas hari ini.</div>';
+          return;
+        }
+        container.innerHTML = [...logs]
+          .reverse()
+          .map((e) => {
+            const isOut = e.type === "out";
+            const lateTag =
+              !isOut && e.lateMin > 0
+                ? `<span class="log-badge late">Terlambat ${e.lateMin}m</span>`
+                : `<span class="log-badge ${isOut ? "out" : "in"}">${isOut ? "Clock Out" : "Clock In"}</span>`;
+            return `
+        <div class="log-entry">
+          <div class="log-dot ${isOut ? "out" : "in"}">${isOut ? "🔴" : "🟢"}</div>
+          <div class="log-info">
+            <div class="log-name">${e.nama}</div>
+            <div class="log-meta">${e.status}${e.deskripsi ? " · " + e.deskripsi.substring(0, 50) + (e.deskripsi.length > 50 ? "..." : "") : ""}</div>
+          </div>
+          ${lateTag}
+          <div class="log-time">${e.jam}</div>
+        </div>`;
+          })
+          .join("");
+      }
+      renderLog();
+
+      // ── Save & Export ─────────────────────────────────────────────────────────
+      function saveLogs() {
+        const all = JSON.parse(localStorage.getItem("mkb_logs") || "[]").filter(
+          (l) => new Date(l.ts).toDateString() !== todayStr,
+        );
+        localStorage.setItem("mkb_logs", JSON.stringify([...all, ...logs]));
+      }
+
+      function exportCSV() {
+        if (logs.length === 0) return alert("Belum ada data untuk diexport.");
+        const header = [
+          "Nama",
+          "Tipe",
+          "Jam",
+          "Status",
+          "Tanggal",
+          "Keterlambatan (menit)",
+          "Potongan (Rp)",
+          "Kegiatan",
+          "Lampiran",
+        ];
+        const rows = logs.map((e) => [
+          e.nama,
+          e.type === "in" ? "Clock In" : "Clock Out",
+          e.jam,
+          e.status,
+          new Date(e.ts).toLocaleDateString("id-ID"),
+          e.lateMin,
+          e.potongan,
+          `"${e.deskripsi.replace(/"/g, '""')}"`,
+          e.file,
+        ]);
+        const csv = [header, ...rows].map((r) => r.join(",")).join("\n");
+        const blob = new Blob(["\uFEFF" + csv], {
+          type: "text/csv;charset=utf-8",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `clockinout_mkb_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    </script>
+  </body>
+</html>
