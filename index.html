@@ -1115,21 +1115,13 @@
         showReceipt(entry);
         resetForm();
 
-        fetch(
-          "https://script.google.com/macros/s/AKfycbypJP_kjiA3R6k5KXfh0ovjO-FiTAjpIDRSQ8jDyu18JeC3cJ-WodqURJw8m31DRqkoCw/exec",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(entry),
-          },
-        )
-          .then((res) => res.text())
-          .then((data) => {
-            console.log("Response Apps Script:", data);
-          })
-          .catch((err) => console.error("Error:", err));
+        fetch("https://script.google.com/macros/s/AKfycbypJP_kjiA3R6k5KXfh0ovjO-FiTAjpIDRSQ8jDyu18JeC3cJ-WodqURJw8m31DRqkoCw/exec", {
+  method: "POST",
+  body: JSON.stringify(entry)
+})
+  .then(res => res.text())
+  .then(data => console.log("RESP:", data))
+  .catch(err => console.error("ERROR:", err));
       }
 
       function resetForm() {
